@@ -1,0 +1,13 @@
+Game:-
+Class of ship : Health(Size)
+1. Aircraft_Carrier		: 5
+2. Battleship			: 4
+3. Destroyer			: 3
+4. Submarine			: 3
+5. Patrol Boat			: 2
+
+
+
+REFERENCES:
+https://en.wikipedia.org/wiki/Battleship_(game)
+http://www.datagenetics.com/blog/december32011/
