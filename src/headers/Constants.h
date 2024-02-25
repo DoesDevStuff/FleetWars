@@ -20,8 +20,13 @@ class Constants {
 
 	//board sizes
 	static const int EASY_SIZE = 8;
-	static const int MEDIUM_SIZE = 10;
-	static const int HARD_SIZE = 12;
+	static const int MEDIUM_SIZE = 12;
+	static const int HARD_SIZE = 16;
+
+	// spaces of board that ships can occupy
+	static const int EASY_TOTAL_OCCUPIED_SPACES = 17;
+	static const int MEDIUM_TOTAL_OCCUPIED_SPACES = 23;
+	static const int HARD_TOTAL_OCCUPIED_SPACES = 30;
 };
 
 #endif /* CONSTANTS_H_ */
