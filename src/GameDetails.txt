@@ -9,8 +9,8 @@ Class of ship : Health(Size) 	: Ship letters
 Hit	H
 Miss	X
 Sunk	_
-Explosive Barrel	@
-Hit Barrel	#
+Explosive Mine	@
+Hit Mine	#
 
 
 REFERENCES:

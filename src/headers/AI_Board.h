@@ -24,8 +24,6 @@ private:
 	bool p_isHitTarget = false;
 	int p_successfulHitsCount = 0;
 
-	friend void PlayerBoard::updateTurnGrid(AI_Board&); // tight coupling needed here also anything else seemed to cause circular dependency
-
 public:
 	AI_Board(int chooseDifficulty, bool displayBoard) : GameBoard(chooseDifficulty, displayBoard) {
 		chooseRandomShips();

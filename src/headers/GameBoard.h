@@ -33,7 +33,7 @@ private:
 
 	vector<pair<int, int>> p_lastHits; //storing coordinates of hits
 	vector<Ship_BaseClass*> p_pointerToShipObj; //pointer to the ship objects
-	vector<vector<char>> p_markShipStatusGrid; // this stores hits, miss, and ships in a grid
+	vector<vector<char>> p_mainGameGrid; // this stores hits, miss, and ships in a grid
 	vector<vector<char>> p_shipLocation; // stores ships coordinates. useful to get if specific ship is sunken
 	vector<Utils::SHIP_TYPE> p_shipLookup; //works with p_shipLocation to determine what ship type is in p_shipLocation
 
@@ -64,10 +64,10 @@ public:
 		p_totalOccupiedSpacesOnBoard = TOTAL_OCCUPIED_SPACES[chooseDifficulty];
 		p_boardDifficultySize = BOARD_SIZE[chooseDifficulty];
 
-		p_markShipStatusGrid.resize(p_boardDifficultySize, vector<char>(p_boardDifficultySize));
+		p_mainGameGrid.resize(p_boardDifficultySize, vector<char>(p_boardDifficultySize));
 		p_shipLocation.resize(p_boardDifficultySize, vector<char>(p_boardDifficultySize));
 
-		fillBoard(p_markShipStatusGrid, '~');
+		fillBoard(p_mainGameGrid, '~');
 		fillBoard(p_shipLocation, '~');
 	}
 
@@ -94,7 +94,7 @@ public:
 	}
 
 	char getBoardCell(int x, int y) const {
-		return p_markShipStatusGrid[x][y];
+		return p_mainGameGrid[x][y];
 	}
 
 	char getShipLocationCell(int x, int y) const {
@@ -166,7 +166,7 @@ public:
 	}
 
 	void setBoardCell(int x, int y, char c) const {
-		p_markShipStatusGrid[x][y] = c;
+		p_mainGameGrid[x][y] = c;
 	}
 
 	void setShipLocationCell(int x, int y, char c) const {
@@ -190,7 +190,7 @@ public:
 	void shipCheck(bool&, int, bool);
 	void sinkShip(Utils::SHIP_TYPE, int);
 	void placeExplosiveMines();
-	void explosiveMinedetonation(int x, int y, bool&);
+	void explosiveMineDetonation(int x, int y, bool&);
 	void explosiveMineFiredAt(int x, int y, bool&);
 
 	bool checkShipPlacement(Utils::SHIP_TYPE, Utils::SHIP_ORIENTATION, int, int, bool) const;
