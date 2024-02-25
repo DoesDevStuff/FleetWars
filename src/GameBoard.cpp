@@ -226,3 +226,183 @@ void GameBoard::explosiveMineFiredAt(int x, int y, bool &hit) {
 
 	hit = explosionHit;
 }
+
+void GameBoard::printGameBoard() const {
+	int difficultySize = getBoardDifficultySize();
+	int vertNum = difficultySize;
+	int counter = 0;
+
+	cout << "\n";
+
+	for(int x = difficultySize -1; x >= 0; x--) {
+		for (int y = 0; y < difficultySize; y++) {
+			if (counter == 0 && vertNum < 10) {
+				cout << " " << vertNum;
+			}
+			else if (counter == 0 && vertNum >= 10) {
+				cout << vertNum;
+			}
+
+			if(p_isShowingGameBoard) {
+				cout << " " << getBoardCell(x, y);
+			}
+			else {
+				if (isShip(x, y) || getBoardCell(x, y) == '@') {
+					cout << " " << '~';
+				}
+				else {
+					cout << " " << getBoardCell(x, y);
+				}
+			}
+			counter++;
+		}
+		cout << endl;
+		counter = 0;
+		vertNum--;
+	}
+
+	cout << "    ";
+	for (int i = 1; i < difficultySize + 1; i++) {
+		if (i < 9) {
+			cout << i << " ";
+		}
+		else {
+			cout << i << " ";
+		}
+	}
+
+	cout << "\n\n";
+}
+
+bool GameBoard::checkShipPlacement(Utils::SHIP_TYPE shipName, Utils::SHIP_ORIENTATION orient, int x, int y, bool flagPlace) const {
+	bool validSpot = true;
+	int adjPlaceChance = RandomNumberGeneration_helper::nextInt(1, 100);
+	int difficultySize = getBoardDifficultySize();
+	int shipSize = SHIP_SIZE[(int)shipName];
+
+	// check if this needs to be utils::vertical instead
+	if (orient == Utils::horizontal) {
+
+		if (x > (difficultySize - shipSize) ) {
+			validSpot = false;
+		}
+
+		if (validSpot) {
+			for (int i = x; i < x + shipSize; i++) {
+				if (p_mainGameGrid[i][y] != '~') {
+					validSpot = false;
+				}
+			}
+		}
+	}
+	else if (orient == Utils::vertical) {
+
+			if (y > (difficultySize - shipSize) ) {
+				validSpot = false;
+			}
+
+			if (validSpot) {
+
+				for (int i = y; i < y + shipSize; i++) {
+					if (p_mainGameGrid[x][i] != '~') {
+						validSpot = false;
+					}
+				}
+			}
+	}
+	// 80% prob
+	if (validSpot && flagPlace && adjPlaceChance < 80) {
+
+		if (orient == Utils::horizontal) {
+
+			for(int i = x; i < x + shipSize; i++) {
+
+				if (i + 1 < difficultySize) {
+
+					if (isShip(i + 1, y)) {
+						validSpot = false;
+						break;
+					}
+				}
+
+				if (y + 1 < difficultySize) {
+
+					if (isShip(i, y + 1)) {
+						 validSpot = false;
+						 break;
+					 }
+				}
+
+				if( i - 1 > 0) {
+
+					if (isShip(i - 1, y)) {
+						validSpot = false;
+						break;
+					}
+				}
+
+				if (y - 1 > 0) {
+
+					if (isShip(i, y - 1)) {
+						validSpot = false;
+						break;
+					}
+				}
+			}
+		}
+
+		else if (orient == Utils::vertical) {
+
+			for(int i = y; i < y + shipSize; i++) {
+
+				if (i + 1 < difficultySize) {
+
+					if (isShip(x, i + 1)) {
+						validSpot = false;
+						break;
+					}
+				}
+
+				if (x + 1 < difficultySize) {
+
+					if (isShip(x + 1, i)) {
+						 validSpot = false;
+						 break;
+					 }
+				}
+
+				if( i - 1 > 0) {
+
+					if (isShip(x, i - 1)) {
+						validSpot = false;
+						break;
+					}
+				}
+
+				if (x - 1 > 0) {
+
+					if (isShip(x - 1, i)) {
+						validSpot = false;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return validSpot;
+}
+
+bool GameBoard::isShip(int x, int y) const {
+	bool cellIsShip = false;
+
+	for(int i = 0; i < Constants::NUM_OF_SHIP_TYPES; i++) {
+
+		if(getBoardCell(x, y) == SHIP_REPRESENTING_LETTERS[i]) {
+			cellIsShip = true;
+			break;
+		}
+	}
+
+	return cellIsShip;
+}
