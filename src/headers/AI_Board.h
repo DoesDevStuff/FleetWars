@@ -24,6 +24,8 @@ private:
 	bool p_isHitTarget = false;
 	int p_successfulHitsCount = 0;
 
+	friend void PlayerBoard::updateTurnGrid(AI_Board&);
+
 public:
 	AI_Board(int chooseDifficulty, bool displayBoard) : GameBoard(chooseDifficulty, displayBoard) {
 		chooseRandomShips();

@@ -110,7 +110,7 @@ void PlayerBoard::playerPlaceShips() {
 			else if (getShipLookupCell(i) == Utils::patrolboat) {
 				shipType = "patrolBoat";
 			}
-			else (getShipLookupCell(i) == Utils::submarine) {
+			else {
 				shipType = "submarine";
 			}
 
@@ -240,9 +240,9 @@ void PlayerBoard::fire(int x, int y, bool& hit) {
 		setLastHit(x, y);
 	}
 
-	else if (getBoardCell(x, y) == "@") {
+	else if (getBoardCell(x, y) == '@') {
 		explosiveMineDetonation(x, y, hit);
-		Utils::printCenter("*!!BOOM!!*", difficultySize);
+		Utils::printCenter("!!BOOM!!", difficultySize);
 	}
 
 	printGameBoard();

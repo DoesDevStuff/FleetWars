@@ -4,6 +4,16 @@
  *  Created on: 25 Feb 2024
  *      Author: Charlie
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-compare"
+
+// Code that triggers the warning:
+/*
+ * 		warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+ * 		for (int i = 0; i < p_shipLocation.size(); i++) {
+ */
+
+#pragma GCC diagnostic pop
 
 #include <iostream>
 #include <string>
@@ -11,13 +21,13 @@
 #include <random>
 #include "headers/Utils.h"
 #include "headers/GameBoard.h"
+#include "headers/AirCraft_Carrier.h"
+#include "headers/Battleship.h"
 #include "headers/Constants.h"
+#include "headers/Destroyer.h"
+#include "headers/PatrolBoat.h"
 #include "headers/RandomNumberGeneration_helper.h"
-#include "headers/ships/AirCraft_Carrier.h"
-#include "headers/ships/Battleship.h"
-#include "headers/ships/Destroyer.h"
-#include "headers/ships/PatrolBoat.h"
-#include "headers/ships/Submarine.h"
+#include "headers/Submarine.h"
 
 using namespace std;
 
@@ -69,7 +79,7 @@ void GameBoard::addShips(int aircraftCarrierNum, int battleshipNum, int destroye
 }
 
 void GameBoard::placeShip(Utils::SHIP_TYPE shipName, Utils::SHIP_ORIENTATION orient, int x, int y, char& shipCounter) {
-	int difficultySize = getGameDifficulty();
+	//int difficultySize = getGameDifficulty();
 	int shipDimensions = SHIP_SIZE[(int)shipName];
 	char shipLetter = SHIP_REPRESENTING_LETTERS[(int)shipName];
 
@@ -151,7 +161,6 @@ void GameBoard::placeExplosiveMines() {
 	int mineToPlace;
 	int maximumMines;
 	int coordinate;
-	mt19937_64& mt = RandomNumberGeneration_helper::getInstance();
 
 	if (getGameDifficulty() == Utils::easy) {
 		maximumMines = 2;

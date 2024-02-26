@@ -10,9 +10,9 @@
 
 #include <vector>
 #include <utility>
-#include "ships/Ship_BaseClass.h"
 #include "Utils.h"
 #include "Constants.h"
+#include "Ship_BaseClass.h"
 
 using namespace std;
 
@@ -165,11 +165,11 @@ public:
 		p_totalNumberOf_Submarine = submarineCount;
 	}
 
-	void setBoardCell(int x, int y, char c) const {
+	void setBoardCell(int x, int y, char c) {
 		p_mainGameGrid[x][y] = c;
 	}
 
-	void setShipLocationCell(int x, int y, char c) const {
+	void setShipLocationCell(int x, int y, char c) {
 		p_shipLocation[x][y] = c;
 	}
 

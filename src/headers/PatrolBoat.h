@@ -8,13 +8,13 @@
 #ifndef PATROLBOAT_H
 #define PATROLBOAT_H
 
+#include "Ship_BaseClass.h"
 #include "Constants.h"
-#include "ships/Ship_BaseClass.h"
 
 class PatrolBoat : public Ship_BaseClass {
 public:
 	PatrolBoat() : Ship_BaseClass() {
-		setShipHealth(Constants::PATROLBOAT_HEALTH);
+		setShipHealth(Constants::PATROLBOAT_SIZE);
 	}
 };
 

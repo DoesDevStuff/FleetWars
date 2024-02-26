@@ -9,6 +9,7 @@
 #define CONSTANTS_H
 
 class Constants {
+public:
 	static const int NUM_OF_SHIP_TYPES = 5;
 
 	// The ship types
