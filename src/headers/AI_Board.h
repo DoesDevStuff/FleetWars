@@ -10,8 +10,8 @@
 
 #include <vector>
 #include "Utils.h"
-#include "GameBoard.h"
-#include "PlayerBoard.h"
+#include "../headers/GameBoard.h"
+#include "../headers/PlayerBoard.h"
 
 using namespace std;
 

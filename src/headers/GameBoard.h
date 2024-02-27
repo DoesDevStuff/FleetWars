@@ -11,8 +11,8 @@
 #include <vector>
 #include <utility>
 #include "Utils.h"
-#include "Constants.h"
-#include "Ship_BaseClass.h"
+#include "../headers/Constants.h"
+#include "../headers/ships/Ship_BaseClass.h"
 
 using namespace std;
 

@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <utility>
-#include "GameBoard.h"
+#include "../headers/GameBoard.h"
 
 class AI_Board;
 

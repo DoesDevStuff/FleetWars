@@ -9,7 +9,7 @@ Class of ship : Health(Size) 	: Ship letters
 Hit	H
 Miss	X
 Sunk	_
-Explosive Mine	@
+Explosive Mine	+
 Hit Mine	#
 
 

@@ -8,8 +8,8 @@
 #ifndef BATTLESHIP_H_
 #define BATTLESHIP_H_
 
-#include "Ship_BaseClass.h"
-#include "Constants.h"
+#include "../../headers/Constants.h"
+#include "../../headers/ships/Ship_BaseClass.h"
 
 class Battleship : public Ship_BaseClass {
 public:

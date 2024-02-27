@@ -4,8 +4,6 @@
  *  Created on: 25 Feb 2024
  *      Author: Charlie
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-compare"
 
 // Code that triggers the warning:
 /*
@@ -13,21 +11,19 @@
  * 		for (int i = 0; i < p_shipLocation.size(); i++) {
  */
 
-#pragma GCC diagnostic pop
-
 #include <iostream>
 #include <string>
 #include <vector>
 #include <random>
-#include "headers/Utils.h"
-#include "headers/GameBoard.h"
-#include "headers/AirCraft_Carrier.h"
-#include "headers/Battleship.h"
-#include "headers/Constants.h"
-#include "headers/Destroyer.h"
-#include "headers/PatrolBoat.h"
-#include "headers/RandomNumberGeneration_helper.h"
-#include "headers/Submarine.h"
+#include "../src/headers/Utils.h"
+#include "../src/headers/GameBoard.h"
+#include "../src/headers/ships/AirCraft_Carrier.h"
+#include "../src/headers/ships/Battleship.h"
+#include "../src/headers/Constants.h"
+#include "../src/headers/ships/Destroyer.h"
+#include "../src/headers/ships/PatrolBoat.h"
+#include "../src/headers/RandomNumberGeneration_helper.h"
+#include "../src/headers/ships/Submarine.h"
 
 using namespace std;
 
@@ -137,15 +133,15 @@ void GameBoard::sinkShip(Utils::SHIP_TYPE sunkShipName, int sunkShip) {
 		setSubmarineCount( (getSubmarineCount() - 1) );
 	}
 
-	for (int i = 0; i < p_shipLocation.size(); i++) {
-		for (int j = 0; j < p_shipLocation.size(); j++) {
-			if(getShipLocationCell(i, j) == (char)sunkShip ) {
+	for (int i = 0; i < static_cast<int>(p_shipLocation.size()); i++) {
+		for (int j = 0; j < static_cast<int>(p_shipLocation.size()); j++) {
+			if(getShipLocationCell(i, j) == static_cast<char>(sunkShip) ) {
 				setBoardCell(i, j, '_');
 			}
 		}
 	}
 
-	for(int i = 1; i < p_lastHits.size(); i++) {
+	for(int i = 1; i <static_cast<int>(p_lastHits.size()); i++) {
 		Xcoord = getLastHitX(i);
 		Ycoord = getLastHitY(i);
 
@@ -159,7 +155,7 @@ void GameBoard::placeExplosiveMines() {
 	int x;
 	int y;
 	int mineToPlace;
-	int maximumMines;
+	int maximumMines = 2;
 	int coordinate;
 
 	if (getGameDifficulty() == Utils::easy) {
@@ -182,7 +178,7 @@ void GameBoard::placeExplosiveMines() {
 		}
 		while (getBoardCell(x, y) != '~');
 
-		setBoardCell(x, y, '@');
+		setBoardCell(x, y, '+');
 	}
 }
 
@@ -215,7 +211,7 @@ void GameBoard::explosiveMineFiredAt(int x, int y, bool &hit) {
 		if(getShipObjCell(damagedShip)->hasShipSunk()) {
 			Utils::SHIP_TYPE sunkenShip = getShipLookupCell(damagedShip);
 			damagedShip = (int)(getShipLocationCell(x, y));
-			setBoardCell(x, y, 'S');
+			setBoardCell(x, y, '_');
 			sinkShip(sunkenShip, damagedShip);
 		}
 
@@ -225,7 +221,7 @@ void GameBoard::explosiveMineFiredAt(int x, int y, bool &hit) {
 		}
 	}
 
-	else if(getBoardCell(x, y) == '@') {
+	else if(getBoardCell(x, y) == '+') {
 		explosiveMineDetonation(x, y, hit);
 	}
 
@@ -238,25 +234,25 @@ void GameBoard::explosiveMineFiredAt(int x, int y, bool &hit) {
 
 void GameBoard::printGameBoard() const {
 	int difficultySize = getBoardDifficultySize();
-	int vertNum = difficultySize;
+	int horizNum = difficultySize;
 	int counter = 0;
 
 	cout << "\n";
 
-	for(int x = difficultySize -1; x >= 0; x--) {
+	for(int x = difficultySize - 1; x >= 0; x--) {
 		for (int y = 0; y < difficultySize; y++) {
-			if (counter == 0 && vertNum < 10) {
-				cout << " " << vertNum;
+			if (counter == 0 && horizNum < 10) {
+				cout << " " << horizNum;
 			}
-			else if (counter == 0 && vertNum >= 10) {
-				cout << vertNum;
+			else if (counter == 0 && horizNum >= 10) {
+				cout << horizNum;
 			}
 
 			if(p_isShowingGameBoard) {
 				cout << " " << getBoardCell(x, y);
 			}
 			else {
-				if (isShip(x, y) || getBoardCell(x, y) == '@') {
+				if (isShip(x, y) || getBoardCell(x, y) == '+') {
 					cout << " " << '~';
 				}
 				else {
@@ -267,7 +263,7 @@ void GameBoard::printGameBoard() const {
 		}
 		cout << endl;
 		counter = 0;
-		vertNum--;
+		horizNum--;
 	}
 
 	cout << "    ";

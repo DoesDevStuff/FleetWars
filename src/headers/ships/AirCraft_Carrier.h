@@ -8,8 +8,8 @@
 #ifndef AIRCRAFT_CARRIER_H
 #define AIRCRAFT_CARRIER_H
 
-#include "Ship_BaseClass.h"
-#include "Constants.h"
+#include "../../headers/Constants.h"
+#include "../../headers/ships/Ship_BaseClass.h"
 
 class AirCraft_Carrier : public Ship_BaseClass {
 public:

@@ -21,11 +21,16 @@ public:
     }
 
     void shipIsHit() {
-        setShipHealth(getShipHealth() - 1);
+        setShipHealth(this->getShipHealth() - 1);
     }
 
     bool hasShipSunk() {
-        return (getShipHealth() == 0);
+    	bool isSunk = false;
+
+        if (this->getShipHealth() == 0) {
+        	isSunk = true;
+        }
+        return isSunk;
     }
 };
 

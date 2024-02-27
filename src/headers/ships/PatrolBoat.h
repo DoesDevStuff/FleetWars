@@ -8,8 +8,8 @@
 #ifndef PATROLBOAT_H
 #define PATROLBOAT_H
 
-#include "Ship_BaseClass.h"
-#include "Constants.h"
+#include "../../headers/Constants.h"
+#include "../../headers/ships/Ship_BaseClass.h"
 
 class PatrolBoat : public Ship_BaseClass {
 public:

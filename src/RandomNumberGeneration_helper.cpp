@@ -5,7 +5,7 @@
  *      Author: Charlie
  */
 
-#include "headers/RandomNumberGeneration_helper.h"
+#include "../src/headers/RandomNumberGeneration_helper.h"
 using namespace std;
 random_device RandomNumberGeneration_helper::_randomDevice;
 mt19937_64 RandomNumberGeneration_helper::_psuedoRandom_Gen(_randomDevice());

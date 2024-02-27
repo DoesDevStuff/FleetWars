@@ -11,11 +11,11 @@
 #include <cmath>
 #include <functional>
 #include <vector>
-#include "headers/Utils.h"
-#include "headers/GameBoard.h"
-#include "headers/PlayerBoard.h"
-#include "headers/Constants.h"
-#include "headers/AI_Board.h"
+#include "../src/headers/Utils.h"
+#include "../src/headers/GameBoard.h"
+#include "../src/headers/PlayerBoard.h"
+#include "../src/headers/Constants.h"
+#include "../src/headers/AI_Board.h"
 
 using namespace std;
 
@@ -36,6 +36,9 @@ void PlayerBoard::playerChooseShips() {
 	Utils::clearScreen();
 
 	while(!isOccupiedSpacesEmpty) {
+		// here we check for the size of the smallest boat which is of space of 2.
+		// This ensures that larger space occupying ships aren't assigned if there isn't any space left
+		// and obviously that at least there need to space for the smallest boat to fit
 		if ( (totalOccupiedSpacesOnBoard - currentShipFleet) >= 2) {
 			cout << "Choose your ships for your battle fleet:\n"
 					<< "[1] Aircraft Carriers:" << Constants::AIRCRAFT_CARRIER_SIZE << " board spaces" << endl
@@ -240,7 +243,7 @@ void PlayerBoard::fire(int x, int y, bool& hit) {
 		setLastHit(x, y);
 	}
 
-	else if (getBoardCell(x, y) == '@') {
+	else if (getBoardCell(x, y) == '+') {
 		explosiveMineDetonation(x, y, hit);
 		Utils::printCenter("!!BOOM!!", difficultySize);
 	}
@@ -251,7 +254,7 @@ void PlayerBoard::fire(int x, int y, bool& hit) {
 void PlayerBoard::updateTurnGrid(AI_Board& ai_board) {
 	for(int x = 0; x < getBoardDifficultySize(); x++) {
 		for(int y = 0; y < getBoardDifficultySize(); y++) {
-			if( isShip(x, y) || getBoardCell(x, y) == '_') {
+			if( isShip(x, y) || getBoardCell(x, y) == '+') {
 				ai_board.p_turnContentsGrid[x][y] = '~';
 			}
 			else {
