@@ -41,18 +41,18 @@ void PlayerBoard::playerChooseShips() {
 		// and obviously that at least there need to space for the smallest boat to fit
 		if ( (totalOccupiedSpacesOnBoard - currentShipFleet) >= 2) {
 			cout << "Choose your ships for your battle fleet:\n"
-					<< "[1] Aircraft Carriers:" << Constants::AIRCRAFT_CARRIER_SIZE << " board spaces" << endl
-					<< "[2] Battleships:" << Constants::BATTLESHIP_SIZE << " board spaces" << endl
-					<< "[3] Destroyers:" << Constants::DESTROYER_SIZE << " board spaces" << endl
-					<< "[4] PatrolBoats:" << Constants::PATROLBOAT_SIZE << " board spaces" << endl
-					<< "[5] Submarines:" << Constants::SUBMARINE_SIZE << " board spaces" << endl
+					<< "[1] Aircraft Carriers: " << Constants::AIRCRAFT_CARRIER_SIZE << " board spaces" << endl
+					<< "[2] Battleships: " << Constants::BATTLESHIP_SIZE << " board spaces" << endl
+					<< "[3] Destroyers: " << Constants::DESTROYER_SIZE << " board spaces" << endl
+					<< "[4] PatrolBoats: " << Constants::PATROLBOAT_SIZE << " board spaces" << endl
+					<< "[5] Submarines: " << Constants::SUBMARINE_SIZE << " board spaces" << endl
 					<< "\nYou have " << (totalOccupiedSpacesOnBoard - currentShipFleet) << " board spaces left." << "\n";
 			cin >> shipChoice;
 
 			while(cin.fail() || shipChoice < 1 || shipChoice > 5) {
 				cin.clear();
 				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				cout << "That is not a valid option." << endl
+				cout << "That is not a valid option. " << endl
 						<< "Please choose a ship for your battle fleet: ";
 				cin >> shipChoice;
 			}

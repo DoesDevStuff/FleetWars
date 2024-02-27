@@ -82,7 +82,7 @@ void GameBoard::placeShip(Utils::SHIP_TYPE shipName, Utils::SHIP_ORIENTATION ori
 	shipCounter ++;
 	if (orient == Utils::horizontal) {
 		for (int i = x; i < (x + shipDimensions); i++) {
-			p_mainGameGrid[i][y] = shipLetter;
+			p_mainGameGrid[i][i] = shipLetter;
 			p_shipLocation[i][y] = shipCounter;
 		}
 	}
@@ -155,17 +155,17 @@ void GameBoard::placeExplosiveMines() {
 	int x;
 	int y;
 	int mineToPlace;
-	int maximumMines = 2;
+	int maximumMines = 1;
 	int coordinate;
 
 	if (getGameDifficulty() == Utils::easy) {
-		maximumMines = 2;
+		maximumMines = 1;
 	}
 	else if (getGameDifficulty() == Utils::medium) {
-		maximumMines = 3;
+		maximumMines = 2;
 	}
 	else if (getGameDifficulty() == Utils::hard) {
-		maximumMines = 4;
+		maximumMines = 3;
 	}
 
 	mineToPlace = RandomNumberGeneration_helper::nextInt(1, maximumMines);
@@ -242,21 +242,21 @@ void GameBoard::printGameBoard() const {
 	for(int x = difficultySize - 1; x >= 0; x--) {
 		for (int y = 0; y < difficultySize; y++) {
 			if (counter == 0 && horizNum < 10) {
-				cout << " " << horizNum;
+				cout << "  " << horizNum;
 			}
 			else if (counter == 0 && horizNum >= 10) {
 				cout << horizNum;
 			}
 
 			if(p_isShowingGameBoard) {
-				cout << " " << getBoardCell(x, y);
+				cout << "  " << getBoardCell(x, y);
 			}
 			else {
 				if (isShip(x, y) || getBoardCell(x, y) == '+') {
-					cout << " " << '~';
+					cout << "  " << '~';
 				}
 				else {
-					cout << " " << getBoardCell(x, y);
+					cout << "  " << getBoardCell(x, y);
 				}
 			}
 			counter++;
@@ -269,10 +269,10 @@ void GameBoard::printGameBoard() const {
 	cout << "    ";
 	for (int i = 1; i < difficultySize + 1; i++) {
 		if (i < 9) {
-			cout << i << " ";
+			cout << i << "  ";
 		}
 		else {
-			cout << i << " ";
+			cout << i << "  ";
 		}
 	}
 
