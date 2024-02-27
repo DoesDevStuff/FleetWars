@@ -41,7 +41,7 @@ namespace Utils {
 	 * https://learn.microsoft.com/en-us/windows/console/console-functions
 	 */
 
-	void clearScreen() {
+	inline void clearScreen() {
 	#ifdef _WIN32
 	    // Windows: Use Windows Console API
 	    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);

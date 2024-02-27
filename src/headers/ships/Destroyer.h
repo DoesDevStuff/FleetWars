@@ -8,8 +8,8 @@
 #ifndef DESTROYER_H
 #define DESTROYER_H
 
-#include "Constants.h"
-#include "ships/Ship_BaseClass.h"
+#include "../../headers/Constants.h"
+#include "../../headers/ships/Ship_BaseClass.h"
 
 class Destroyer : public Ship_BaseClass {
 public:

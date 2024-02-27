@@ -1,11 +1,16 @@
 Game:-
-Class of ship : Health(Size)
-1. Aircraft_Carrier		: 5
-2. Battleship			: 4
-3. Destroyer			: 3
-4. Submarine			: 3
-5. Patrol Boat			: 2
+Class of ship : Health(Size) 	: Ship letters
+1. Aircraft_Carrier		: 5		: 'C'
+2. Battleship			: 4		: 'B'
+3. Destroyer			: 3		: 'D'
+4. Submarine			: 3		: 'S'
+5. Patrol Boat			: 2		: 'P'
 
+Hit	H
+Miss	X
+Sunk	_
+Explosive Mine	+
+Hit Mine	#
 
 
 REFERENCES:
