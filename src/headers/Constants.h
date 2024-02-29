@@ -15,10 +15,9 @@ public:
 	// The ship types
 	static const int AIRCRAFT_CARRIER_SIZE = 5;
 	static const int BATTLESHIP_SIZE = 4;
-	static const int SUBMARINE_SIZE = 3;
 	static const int DESTROYER_SIZE = 3;
-	static const int PATROLBOAT_SIZE = 2;
-
+	static const int PATROLBOAT_SIZE = 3;
+	static const int SUBMARINE_SIZE = 2;
 	//board sizes
 	static const int EASY_SIZE = 10;
 	static const int MEDIUM_SIZE = 10;

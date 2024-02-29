@@ -3,8 +3,8 @@ Class of ship : Health(Size) 	: Ship letters
 1. Aircraft_Carrier		: 5		: 'C'
 2. Battleship			: 4		: 'B'
 3. Destroyer			: 3		: 'D'
-4. Submarine			: 3		: 'S'
-5. Patrol Boat			: 2		: 'P'
+4. Patrol Boat			: 3		: 'P'
+5. Submarine			: 2		: 'S'
 
 Hit	H
 Miss	X

@@ -83,23 +83,23 @@ void AI_Board::randomiseShipPlacement() {
 void AI_Board::buildEqualityGrid() {
 	int polarity = RandomNumberGeneration_helper::nextInt(0, 1);
 	int difficultySize = getBoardDifficultySize();
-	int smallestShip = SHIP_SIZE[3]; //Constants::PatrolBoat = 2; which is our smallest ship is at index three. (alphabetical order)
+	int smallestShip = SHIP_SIZE[4]; //Constants::PatrolBoat = 2; which is our smallest ship is at index three. (alphabetical order)
 
-	for (int x = 0; x < difficultySize; x++) {
-		for (int y = x % smallestShip; y < difficultySize; y += smallestShip) {
-			p_equalityGrid[x][y] = 1;
+	for (int y = 0; y < difficultySize; y++) {
+		for (int x = y % smallestShip; x < difficultySize; x += smallestShip) {
+			p_equalityGrid[y][x] = 1;
 		}
 	}
 
 	// randomly choose from the equalities (parities)
 	if (polarity == 1) {
-		for (int i = 0; i < difficultySize; i++) {
-			for (int j = 0; j < difficultySize; j++) {
-				if (p_equalityGrid[i][j] == 0) {
-					p_equalityGrid[i][j] = 1;
+		for (int y = 0; y < difficultySize; y++) {
+			for (int x = 0; x < difficultySize; x++) {
+				if (p_equalityGrid[y][x] == 0) {
+					p_equalityGrid[y][x] = 1;
 				}
 				else {
-					p_equalityGrid[i][j] = 0;
+					p_equalityGrid[y][x] = 0;
 				}
 			}
 		}
@@ -125,6 +125,7 @@ void AI_Board::randomiseOrientation(Utils::SHIP_ORIENTATION& shipOrient) {
 }
 
 void AI_Board::fire(int x, int y, bool& playerHit) {
+
 	playerHit = false;
 	int difficultySize = getBoardDifficultySize();
 	Utils::clearScreen();
@@ -197,7 +198,7 @@ void AI_Board::AI_probabilityHeuristic_Fire(int& x, int& y, bool& ai_Hit) {
 			x = RandomNumberGeneration_helper::nextInt(0, difficultySize - 1);;
 			y = RandomNumberGeneration_helper::nextInt(0, difficultySize - 1);;
 		}
-		while (p_equalityGrid[x][y] != 1 || p_turnContentsGrid[x][y] != '~');
+		while (p_equalityGrid[y][x] != 1 || p_turnContentsGrid[y][x] != '~');
 	}
 
 	else {
@@ -208,16 +209,16 @@ void AI_Board::AI_probabilityHeuristic_Fire(int& x, int& y, bool& ai_Hit) {
 		int countOfMaximums = 0;
 		vector<pair<int, int>> maximums;
 
-		for (int x = 0; x < difficultySize; x++) {
-			for (int y = 0; y < difficultySize; y++) {
+		for (int y = 0; y < difficultySize; y++) {
+			for (int x = 0; x < difficultySize; x++) {
 
-				if (p_probabilityGrid[x][y] > maxProbability) {
+				if (p_probabilityGrid[y][x] > maxProbability) {
 					countOfMaximums = 0;
 					maximums.clear();
-					maxProbability = p_probabilityGrid[x][y];
+					maxProbability = p_probabilityGrid[y][x];
 				}
 
-				if (p_probabilityGrid[x][y] == maxProbability) {
+				if (p_probabilityGrid[y][x] == maxProbability) {
 					maximums.push_back(make_pair(x, y));
 					countOfMaximums++;
 				}
@@ -242,15 +243,15 @@ void AI_Board::AI_probabilityHeuristic_Fire(int& x, int& y, bool& ai_Hit) {
 
 void AI_Board::updateTurnGrid(AI_Board& ai_board) {
 
-	for(int x = 0; x < getBoardDifficultySize(); x++) {
-		for(int y = 0; y < getBoardDifficultySize(); y++) {
+	for(int y = 0; y < getBoardDifficultySize(); y++) {
+		for(int x = 0; x < getBoardDifficultySize(); x++) {
 
 			if( isShip(x, y) || getBoardCell(x, y) == '+') {
-				ai_board.p_turnContentsGrid[x][y] = '~';
+				ai_board.p_turnContentsGrid[y][x] = '~';
 			}
 
 			else {
-				ai_board.p_turnContentsGrid[x][y] = getBoardCell(x, y);
+				ai_board.p_turnContentsGrid[y][x] = getBoardCell(x, y);
 			}
 		}
 	}
@@ -279,27 +280,35 @@ void AI_Board::updateProbaility() {
 	for (int i = 0; i < shipTypes; i++) {
 
 		// try placing ships horizontally
-		for (int x = 0; x < getBoardDifficultySize(); x++) {
-			for (int y = 0; y < (getBoardDifficultySize() - (SHIP_SIZE[i] + 1) ); y++ ) {
+		for (int y = 0; y < getBoardDifficultySize(); y++) {
+
+			for (int x = 0; x < (getBoardDifficultySize() - SHIP_SIZE[i] + 1 ); x++ ) {
+
 				canFit = true;
 				hits = 0;
 				probabilityWeights = 1;
 
-				for (int j = y; j < SHIP_SIZE[i] + y; j++) {
-					if (p_turnContentsGrid[x][j] != '~' && p_turnContentsGrid[x][j] != 'H') {
+				for (int j = x; j < SHIP_SIZE[i] + x; j++) {
+
+					if (p_turnContentsGrid[y][j] != '~' && p_turnContentsGrid[y][j] != 'H') {
+
 						canFit = false;
 						break;
 					}
-					else if (p_turnContentsGrid[x][j] == 'H') {
+
+					else if (p_turnContentsGrid[y][j] == 'H') {
 						hits++;
 					}
 				}
 
 				if (hits > 0) {
+
 					if (hits == 1) {
 						probabilityWeights = 25;
 					}
+
 					else {
+
 						probabilityWeights = 200 * hits;
 					}
 				}
@@ -307,17 +316,17 @@ void AI_Board::updateProbaility() {
 				// increment probability matrix if the ship actually fits
 				if (canFit) {
 
-					for (int j = y; j < SHIP_SIZE[i] + y; j++) {
+					for (int j = x; j < SHIP_SIZE[i] + x; j++) {
 						if (hits > 0) {
-							if (p_turnContentsGrid[x][j] == 'H') {
-								p_probabilityGrid[x][j] = 0;
+							if (p_turnContentsGrid[y][j] == 'H') {
+								p_probabilityGrid[y][j] = 0;
 							}
 							else {
-								p_probabilityGrid[x][j] += probabilityWeights;
+								p_probabilityGrid[y][j] += probabilityWeights;
 							}
 						}
 						else {
-							p_probabilityGrid[x][j] += probabilityWeights;
+							p_probabilityGrid[y][j] += probabilityWeights;
 						}
 					}
 				}
@@ -325,24 +334,26 @@ void AI_Board::updateProbaility() {
 		}
 
 		// try placing the ships vertically
-		for (int y = 0; y < getBoardDifficultySize(); y++) {
-			for (int x = 0; x < (getBoardDifficultySize() - (SHIP_SIZE[i] + 1) ); x++) {
+		for (int x = 0; x < getBoardDifficultySize(); x++) {
+
+			for (int y = 0; y < (getBoardDifficultySize() - SHIP_SIZE[i] + 1 ); y++) {
 
 				canFit = true;
 				hits = 0;
 				probabilityWeights = 1;
 
-				for(int j = x; j < SHIP_SIZE[i] + x; j++) {
-					if (p_turnContentsGrid[j][y] != '~' && p_turnContentsGrid[j][y] != 'H') {
+				for(int j = y; j < SHIP_SIZE[i] + y; j++) {
+					if (p_turnContentsGrid[j][x] != '~' && p_turnContentsGrid[j][x] != 'H') {
 						canFit = false;
 						break;
 					}
-					else if (p_turnContentsGrid[j][y] == 'H') {
+					else if (p_turnContentsGrid[j][x] == 'H') {
 						hits++;
 					}
 				}
 
 				if (hits > 0) {
+
 					if (hits == 1) {
 						probabilityWeights = 25;
 					}
@@ -354,17 +365,19 @@ void AI_Board::updateProbaility() {
 				// increment the probability matrix if the ship actually fits
 
 				if (canFit) {
-					for(int j = x; j < SHIP_SIZE[i] + x; j++) {
+
+					for(int j = y; j < SHIP_SIZE[i] + y; j++) {
+
 						if (hits > 0) {
-							if (p_turnContentsGrid[j][y] == 'H') {
-								p_probabilityGrid[j][y] = 0;
+							if (p_turnContentsGrid[j][x] == 'H') {
+								p_probabilityGrid[j][x] = 0;
 							}
 							else {
-								p_probabilityGrid[j][y] += probabilityWeights;
+								p_probabilityGrid[j][x] += probabilityWeights;
 							}
 						}
 						else {
-							p_probabilityGrid[j][y] += probabilityWeights;
+							p_probabilityGrid[j][x] += probabilityWeights;
 						}
 					}
 				}
@@ -374,24 +387,25 @@ void AI_Board::updateProbaility() {
 }
 
 void AI_Board::printProbabilityGrid() const {
+
 	int difficultySize = getBoardDifficultySize();
 
 	cout << "\n\n";
 
-	for (int i = difficultySize - 1; i >= 0; i--) {
-		cout << " ";
-		for (int j = 0; j < difficultySize; j++) {
-			if (p_probabilityGrid[i][j] < 0) {
-				cout << p_probabilityGrid[i][j] << "     ";
+	for (int y = difficultySize - 1; y >= 0; y--) {
+		cout << "   ";
+		for (int x = 0; x < difficultySize; x++) {
+			if (p_probabilityGrid[y][x] < 0) {
+				cout << p_probabilityGrid[y][x] << "     ";
 			}
-			else if (p_probabilityGrid[i][j] < 100) {
-				cout << p_probabilityGrid[i][j] << "     ";
+			else if (p_probabilityGrid[y][x] < 100) {
+				cout << p_probabilityGrid[y][x] << "    ";
 			}
-			else if (p_probabilityGrid[i][j] < 1000) {
-				cout << p_probabilityGrid[i][j] << "     ";
+			else if (p_probabilityGrid[y][x] < 1000) {
+				cout << p_probabilityGrid[y][x] << "   ";
 			}
 			else {
-				cout << p_probabilityGrid[i][j] << "     ";
+				cout << p_probabilityGrid[y][x] << "  ";
 			}
 		}
 		cout << endl;

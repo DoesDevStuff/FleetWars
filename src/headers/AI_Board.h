@@ -59,15 +59,15 @@ public:
 		int counter = 0;
 		p_successfulHitsCount = 0;
 
-		for(int i = 0; i < getBoardDifficultySize(); i++) {
-			for (int j = 0; j < getBoardDifficultySize(); j++) {
+		for(int j = 0; j < getBoardDifficultySize(); j++) {
+			for (int i = 0; i < getBoardDifficultySize(); i++) {
 
-				if(p_turnContentsGrid[i][j] != '~') {
-					counter ++;
+				if(p_turnContentsGrid[j][i] != '~') {
+					counter++;
 				}
 
-				if(p_turnContentsGrid[i][j] != '_') {
-					p_successfulHitsCount ++;
+				if(p_turnContentsGrid[j][i] != '_') {
+					p_successfulHitsCount++;
 				}
 
 			}
