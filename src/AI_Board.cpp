@@ -20,25 +20,24 @@ using namespace std;
 
 void AI_Board::chooseRandomShips() {
 	int totalOccupiedSpacesOnBoard = getTotalOccupiedSpacesOnBoard();
-	int shipChoice;
+	int shipChoice = 0;
 	int aircraftCarrierCount = 0;
 	int battleshipCount = 0;
 	int destroyerCount = 0;
 	int patrolboatCount = 0;
 	int submarineCount = 0;
 	int currentShipFleet = 0;
-	int randomInt = RandomNumberGeneration_helper::nextInt(0, 4);
 
 	bool isOccupiedSpacesEmpty = false;
 
 	reference_wrapper<int> playerShipFleet[5] = {aircraftCarrierCount, battleshipCount, destroyerCount, patrolboatCount, submarineCount};
 
 	while(!isOccupiedSpacesEmpty) {
-		shipChoice = randomInt;
+		shipChoice = RandomNumberGeneration_helper::nextInt(0, 4);
 
 		if( (totalOccupiedSpacesOnBoard - currentShipFleet) >= 2) {
 
-			if ( (totalOccupiedSpacesOnBoard - (currentShipFleet + SHIP_SIZE[shipChoice]) ) >= 0) {
+			if ( (totalOccupiedSpacesOnBoard - currentShipFleet + SHIP_SIZE[shipChoice] ) >= 0) {
 				playerShipFleet[shipChoice]++;
 				currentShipFleet += SHIP_SIZE[shipChoice];
 			}
@@ -49,7 +48,12 @@ void AI_Board::chooseRandomShips() {
 		}
 
 		else {
-			isOccupiedSpacesEmpty = false;
+			isOccupiedSpacesEmpty = true;
+		}
+
+		// Update isOccupiedSpacesEmpty based on the result of shipCheck
+		if (isOccupiedSpacesEmpty) {
+			break; // If shipCheck indicates not enough space, exit the loop
 		}
 	}
 

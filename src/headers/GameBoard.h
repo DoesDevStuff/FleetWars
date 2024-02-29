@@ -58,7 +58,7 @@ public:
 
 	GameBoard(int chooseDifficulty, bool displayBoard) {
 		p_isShowingGameBoard = displayBoard;
-		chooseDifficulty --;
+		chooseDifficulty--;
 
 		p_gameDifficulty = GAME_DIFFICULTY[chooseDifficulty];
 		p_totalOccupiedSpacesOnBoard = TOTAL_OCCUPIED_SPACES[chooseDifficulty];
