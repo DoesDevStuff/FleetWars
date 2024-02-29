@@ -5,12 +5,6 @@
  *      Author: Charlie
  */
 
-// Code that triggers the warning:
-/*
- * 		warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
- * 		for (int i = 0; i < p_shipLocation.size(); i++) {
- */
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -75,21 +69,22 @@ void GameBoard::addShips(int aircraftCarrierNum, int battleshipNum, int destroye
 }
 
 void GameBoard::placeShip(Utils::SHIP_TYPE shipName, Utils::SHIP_ORIENTATION orient, int x, int y, char& shipCounter) {
-	//int difficultySize = getGameDifficulty();
+
 	int shipDimensions = SHIP_SIZE[(int)shipName];
 	char shipLetter = SHIP_REPRESENTING_LETTERS[(int)shipName];
 
 	shipCounter ++;
+
 	if (orient == Utils::horizontal) {
 		for (int i = x; i < (x + shipDimensions); i++) {
-			p_mainGameGrid[i][i] = shipLetter;
-			p_shipLocation[i][y] = shipCounter;
+			p_mainGameGrid[y][i] = shipLetter;
+			p_shipLocation[y][i] = shipCounter;
 		}
 	}
 	else if(orient == Utils::vertical) {
 		for (int i = y; i < (y + shipDimensions); i++) {
-			p_mainGameGrid[x][i] = shipLetter;
-			p_shipLocation[x][i] = shipCounter;
+			p_mainGameGrid[i][x] = shipLetter;
+			p_shipLocation[i][x] = shipCounter;
 		}
 	}
 }
@@ -133,8 +128,8 @@ void GameBoard::sinkShip(Utils::SHIP_TYPE sunkShipName, int sunkShip) {
 		setSubmarineCount( (getSubmarineCount() - 1) );
 	}
 
-	for (int i = 0; i < static_cast<int>(p_shipLocation.size()); i++) {
-		for (int j = 0; j < static_cast<int>(p_shipLocation.size()); j++) {
+	for (int j = 0; j < static_cast<int>(p_shipLocation.size()); j++) {
+		for (int i = 0; i < static_cast<int>(p_shipLocation.size()); i++) {
 			if(getShipLocationCell(i, j) == static_cast<char>(sunkShip) ) {
 				setBoardCell(i, j, '_');
 			}
@@ -185,12 +180,12 @@ void GameBoard::placeExplosiveMines() {
 void GameBoard::explosiveMineDetonation(int x, int y, bool &hit) {
 	setBoardCell(x, y, '#');
 	// what radius are exploding in this case 2 spaces around
-	for (int i = x - 2; i <= x + 2; i++) {
-		for (int j = y - 2; j <= y + 2; j++) {
+	for (int i = y - 2; i <= y + 2; i++) {
+		for (int j = x - 2; j <= x + 2; j++) {
 			if (i < 0 || j < 0 || i > getBoardDifficultySize() -1 || j > getBoardDifficultySize() - 1) {
 				continue;
 			}
-			explosiveMineFiredAt(i, j, hit);
+			explosiveMineFiredAt(j, i, hit);
 		}
 	}
 }
@@ -234,18 +229,20 @@ void GameBoard::explosiveMineFiredAt(int x, int y, bool &hit) {
 
 void GameBoard::printGameBoard() const {
 	int difficultySize = getBoardDifficultySize();
-	int horizNum = difficultySize;
+	int vertNumber = difficultySize;
 	int counter = 0;
 
 	cout << "\n";
 
-	for(int x = difficultySize - 1; x >= 0; x--) {
-		for (int y = 0; y < difficultySize; y++) {
-			if (counter == 0 && horizNum < 10) {
-				cout << "  " << horizNum;
+	for(int y = difficultySize - 1; y >= 0; y--) {
+
+		for (int x = 0; x < difficultySize; x++) {
+
+			if (counter == 0 && vertNumber < 10) {
+				cout << " " << vertNumber;
 			}
-			else if (counter == 0 && horizNum >= 10) {
-				cout << horizNum;
+			else if (counter == 0 && vertNumber >= 10) {
+				cout << vertNumber;
 			}
 
 			if(p_isShowingGameBoard) {
@@ -263,7 +260,7 @@ void GameBoard::printGameBoard() const {
 		}
 		cout << endl;
 		counter = 0;
-		horizNum--;
+		vertNumber--;
 	}
 
 	cout << "    ";
@@ -272,7 +269,7 @@ void GameBoard::printGameBoard() const {
 			cout << i << "  ";
 		}
 		else {
-			cout << i << "  ";
+			cout << i << " ";
 		}
 	}
 
@@ -294,7 +291,7 @@ bool GameBoard::checkShipPlacement(Utils::SHIP_TYPE shipName, Utils::SHIP_ORIENT
 
 		if (validSpot) {
 			for (int i = x; i < x + shipSize; i++) {
-				if (p_mainGameGrid[i][y] != '~') {
+				if (p_mainGameGrid[y][i] != '~') {
 					validSpot = false;
 				}
 			}
@@ -309,7 +306,7 @@ bool GameBoard::checkShipPlacement(Utils::SHIP_TYPE shipName, Utils::SHIP_ORIENT
 			if (validSpot) {
 
 				for (int i = y; i < y + shipSize; i++) {
-					if (p_mainGameGrid[x][i] != '~') {
+					if (p_mainGameGrid[i][x] != '~') {
 						validSpot = false;
 					}
 				}
@@ -320,7 +317,7 @@ bool GameBoard::checkShipPlacement(Utils::SHIP_TYPE shipName, Utils::SHIP_ORIENT
 
 		if (orient == Utils::horizontal) {
 
-			for(int i = x; i < x + shipSize; i++) {
+			for (int i = x; i < x + shipSize; i++) {
 
 				if (i + 1 < difficultySize) {
 

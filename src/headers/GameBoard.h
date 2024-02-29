@@ -49,9 +49,9 @@ public:
 
 	template <typename T> void fillBoard(vector<vector<T>> &boardVec, T fillValue) {
 		int p_boardDifficultySize = getBoardDifficultySize();
-		for (int i = 0; i < p_boardDifficultySize; i++){
-			for (int j = 0; j < p_boardDifficultySize; j++){
-				boardVec[i][j] = fillValue;
+		for (int y = 0; y < p_boardDifficultySize; y++){
+			for (int x = 0; x < p_boardDifficultySize; x++){
+				boardVec[y][x] = fillValue;
 			}
 		}
 	}
@@ -94,11 +94,11 @@ public:
 	}
 
 	char getBoardCell(int x, int y) const {
-		return p_mainGameGrid[x][y];
+		return p_mainGameGrid[y][x];
 	}
 
 	char getShipLocationCell(int x, int y) const {
-		return p_shipLocation[x][y];
+		return p_shipLocation[y][x];
 	}
 
 	int getBoardDifficultySize() const {
@@ -166,11 +166,11 @@ public:
 	}
 
 	void setBoardCell(int x, int y, char c) {
-		p_mainGameGrid[x][y] = c;
+		p_mainGameGrid[y][x] = c;
 	}
 
 	void setShipLocationCell(int x, int y, char c) {
-		p_shipLocation[x][y] = c;
+		p_shipLocation[y][x] = c;
 	}
 
 	void setLastHit(int x, int y) {
