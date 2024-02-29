@@ -152,7 +152,7 @@ void PlayerBoard::playerPlaceShips() {
 				}
 			}
 
-			cout << "Y coordinate";
+			cout << "Y coordinate: ";
 			cin >> y;
 
 			if( y > getBoardDifficultySize() || y < 1 || cin.fail() ) {
@@ -195,7 +195,7 @@ void PlayerBoard::playerFire(int& x, int& y) {
 		}
 	}
 
-	cout << "Y coordinate";
+	cout << "Y coordinate: ";
 	cin >> y;
 
 	if( y > getBoardDifficultySize() || y < 1 || cin.fail() ) {
@@ -235,6 +235,7 @@ void PlayerBoard::fire(int x, int y, bool& hit) {
 			sinkShip(sunkenship, damagedship);
 			Utils::printCenter("Ship has Sunk!!", difficultySize);
 		}
+
 		else {
 			setBoardCell(x, y, 'H');
 			Utils::printCenter("HIT", difficultySize);
@@ -252,13 +253,17 @@ void PlayerBoard::fire(int x, int y, bool& hit) {
 }
 
 void PlayerBoard::updateTurnGrid(AI_Board& ai_board) {
-	for(int x = 0; x < getBoardDifficultySize(); x++) {
-		for(int y = 0; y < getBoardDifficultySize(); y++) {
+
+	for(int y = 0; y < getBoardDifficultySize(); y++) {
+
+		for(int x = 0; x < getBoardDifficultySize(); x++) {
+
 			if( isShip(x, y) || getBoardCell(x, y) == '+') {
-				ai_board.p_turnContentsGrid[x][y] = '~';
+				ai_board.p_turnContentsGrid[y][x] = '~';
 			}
+
 			else {
-				ai_board.p_turnContentsGrid[x][y] = getBoardCell(x, y);
+				ai_board.p_turnContentsGrid[y][x] = getBoardCell(x, y);
 			}
 		}
 	}

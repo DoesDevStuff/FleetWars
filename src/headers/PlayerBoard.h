@@ -29,6 +29,4 @@ public:
 	void updateTurnGrid(AI_Board&);
 };
 
-
-
 #endif /* PLAYERBOARD_H*/

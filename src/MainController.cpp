@@ -9,7 +9,7 @@
 #include "../src/headers/MCTS.h"
 
 void MainController::playGame() {
-		int diffChoice;
+		int diffChoice = 1;
 	    int shotX;
 	    int shotY;
 	    bool turnResult = false;
