@@ -247,7 +247,7 @@ Player* GameImplementation::play(Player* player1, Player* player2, Board& board1
     cout << endl;
     cout << "Game Over." << endl;
     cout << "Thanks for playing !" << endl;
-    cout << "               - Charlie " << endl << endl;
+    cout << "          - Charlie " << endl << endl;
     cout << "P.S. Remember to delete your players. "<< endl << endl << endl << endl;
     return winner;
 }
