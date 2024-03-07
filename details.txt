@@ -1,0 +1,17 @@
+Board is 10 x 10
+
+Symbols:
+1. Damaged ship segment = 'X'
+2. Water tiles (no attack made here) = '.'
+3. If the attack misses in a ship the change the water to display = 'o'
+4. if the tile is blocked for placement '#'
+If the shotOnlyParameter is false, then we use the ship symbols to display an undamaged ship
+If the shotOnlyParameter is true, the use '.' to display the undamaged ship
+
+
+Ships:
+1. Aircraft Carrier : 5 segments = AAAAA
+2. Battleship 		: 4 segments = BBBB
+3. Destroyer 		: 3 segments = DDD
+4. Submarine		: 3 segments = SSS
+5. Patrol Boat 		: 2 segments = PP
