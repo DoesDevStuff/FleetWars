@@ -20,10 +20,6 @@ bool search (char character, const vector<char>& vec) {
 
 
 class BoardImplementation {
-private:
-  const Game& p_game;
-  vector<char> p_board;
-
 public:
 	BoardImplementation(const Game& game);
 	void clearBoard();
@@ -38,14 +34,13 @@ public:
 	bool unplaceShips(Coordinate top_left, int shipID, Direction direction);
 	bool attack(Coordinate coordinate, bool& shotHit, bool& shipsDestroyed, int& shipID);
 	bool allShipsDestroyed() const;
+
+private:
+  const Game& p_game;
+  vector<char> p_board;
 };
 
-BoardImplementation::BoardImplementation(const Game& game) {
-	p_game = game;
-	int rows = game.rows();
-	int columns = game.columns();
-	p_board.resize(rows * columns, '.');
-}
+BoardImplementation::BoardImplementation(const Game& game) : p_game(game), p_board(game.rows() * game.columns(), '.') {}
 
 void BoardImplementation::clearBoard() {
     for (size_t i = 0, board_size = p_board.size(); i < board_size; ++i) {

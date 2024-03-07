@@ -7,8 +7,6 @@ class Game;
 class BoardImplementation;
 
 class Board {
-private:
-	BoardImplementation* p_boardImplementation;
 
 public:
 	Board(const Game& game);
@@ -27,6 +25,9 @@ public:
 	// prevent the Board object from being assigned or copied
 	Board(const Board&) = delete;
 	Board& operator=(const Board&) = delete;
+
+private:
+	BoardImplementation* p_boardImplementation;
 
 };
 

@@ -11,6 +11,7 @@ enum Direction {
 
 // (row, column) coordinate for the ship
 class Coordinate {
+
 public:
 	int row;
 	int column;

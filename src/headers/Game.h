@@ -11,8 +11,6 @@ class Player;
 class GameImplementation;
 
 class Game {
-private:
-	GameImplementation* p_gameImplementation;
 
 public:
 	Game(int noOfRows, int noOfColumns);
@@ -37,6 +35,10 @@ public:
 	// prevent the Game object from being assigned or copied
 	Game(const Game&) = delete;
 	Game& operator=(const Game&) = delete;
+
+private:
+	GameImplementation* p_gameImplementation;
+
 };
 
 #endif // GAME_INCLUDED

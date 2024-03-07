@@ -5,30 +5,23 @@ using namespace std;
 
 #include <string>
 
-class Constants;
+class Coordinate;
 class Board;
 class Game;
 
 class Player {
 
-private:
-	string p_name;
-	const Game& p_game;
-
 public:
-	Player(string name, const Game& game) {
-		p_name = name;
-		p_game = game;
-	}
+	Player(string name, const Game& game) : p_name(name), p_game(game) {}
 
 	virtual ~Player() {};
 
-	string name() const {
-		return p_name;
-	}
-
 	const Game& game() const {
 		return p_game;
+	}
+
+	string name() const {
+		return p_name;
 	}
 
 	virtual bool isHumanPlayer() const {
@@ -45,6 +38,10 @@ public:
 	// prevent the Player object from being assigned or copied
 	Player(const Player&) = delete;
 	Player& operator=(const Player&) = delete;
+
+private:
+	string p_name;
+	const Game& p_game;
 };
 
 

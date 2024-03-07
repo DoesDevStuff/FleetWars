@@ -175,6 +175,10 @@ Player* GameImplementation::play(Player* player1, Player* player2, Board& board1
 
 			// turns cannot possibly be more than the total no of cells in our grid.
 			// break condition
+
+			//** type cast for warning??
+			/* if (turn_counter > static_cast<unsigned int>(nRows * nCols))
+			*/
 			if (turn_counter > noOfRows * noOfColumns) {
 				return nullptr;
 			}
@@ -356,7 +360,7 @@ Coordinate Game::randomCoordinate() const {
 	return p_gameImplementation->randomCoordinate();
 }
 
-Player* Game::play(Player* player1, Player* player2, bool shouldPause = true) {
+Player* Game::play(Player* player1, Player* player2, bool shouldPause) {
 
 	if (player1 == nullptr || player2 == nullptr || noOfShips() == 0) {
 		return nullptr;
