@@ -23,7 +23,8 @@ int main () {
 	const int totalGameSimulated = 10;
 
 	cout << "Select one of these choices for an example of the game:" << endl;
-	cout << "  1.  A human player against a Hunt-Target player" << endl;
+	//cout << "  1.  A human player against a Hunt-Target player" << endl;
+	cout << "  1.  A human player against an MCTS player" << endl;
 	cout << "  2.  A standard game between a Probability recursive player and a Hunt-Target player" << endl;
 	cout << "  3.  A standard game between a Hunt-Target player and an MCTS player" << endl;
 	cout << "  4.  A " << totalGameSimulated << "-game match between a Hunt-Target player and an MCTS player, with no pauses" << endl;
@@ -39,7 +40,8 @@ int main () {
     else if (line[0] == '1') {
         Game game(10, 10);
         addStandardShips(game);
-        Player* player1 = createPlayer("huntTarget", "Hunt-Target AI", game);
+        //Player* player1 = createPlayer("huntTarget", "Hunt-Target AI", game);
+        Player* player1 = createPlayer("mcts", "MCTS AI", game);
         Player* player2 = createPlayer("human", "Human Player", game);
         game.play(player1, player2);
         delete player1;
