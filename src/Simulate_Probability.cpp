@@ -138,6 +138,16 @@ bool SimulateProbability_Board::place_ships() {
     return success;
 }
 
+bool SimulateProbability_Board::allShipsDestroyed() const {
+    for (size_t i = 0, boardSize = p_board.size(); i < boardSize; ++i) {
+    	//if we find a character that isn't one of those 3, its from an undamaged segment of a ship
+        if (!(p_board[i] == 'o' || p_board[i] == '.' || p_board[i] == 'X')) {
+        	return false;
+        }
+    }
+    return true;
+}
+
 //*********************************************************************
 //  Simulate Probability Board Private Functions
 //*********************************************************************

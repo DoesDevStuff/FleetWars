@@ -32,6 +32,7 @@ public:
     bool is_ship_destroyed(int shipID) const;
     bool is_valid_board() const;
     bool place_ships();
+    bool allShipsDestroyed() const;
 
 private:
     const Game& p_game;
