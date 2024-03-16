@@ -63,7 +63,8 @@ int main () {
 		Game game(10, 10);
 		addStandardShips(game);
 		// createPlayer("prob_recursive", "Probabilistic_Recursion-Target AI", game);
-		Player* player1 = createPlayer("huntTarget", "Hunt-Target AI", game);
+		// createPlayer("huntTarget", "Hunt-Target AI", game);
+		Player* player1 = createPlayer("randoTest", "Random Test AI", game);
 		Player* player2 = createPlayer("mcts", "MCTS AI", game);
 		cout << "This is a standard battleship game with 5 ships on a 10x10 board" << endl << endl;
 		game.play(player1, player2);

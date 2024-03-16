@@ -33,6 +33,7 @@ private:
     chrono::high_resolution_clock::time_point p_time;
 };
 
+
 //******************************************************************************************
 // 						Human Player
 //******************************************************************************************
@@ -166,6 +167,63 @@ void HumanPlayer::recordAttackResults(Coordinate, bool, bool, bool, int) {
 
 void HumanPlayer::recordAttackByOpponent(Coordinate) {
 	// ignores what opponent does
+}
+
+//******************************************************************************************
+// 						Terrible Test Player
+//******************************************************************************************
+class RandomTestPlayer: public Player {
+public:
+	RandomTestPlayer(string name, const Game& game);
+	virtual bool placeShips(Board& board);
+	Coordinate recommendAttack() override;
+
+	virtual void recordAttackResults(Coordinate coordinate, bool isValidShot, bool isShotHit, bool isShipDestroyed, int shipID);
+
+	virtual void recordAttackByOpponent(Coordinate coordinate);
+
+private:
+	Coordinate p_lastAttackedCoordinate;
+};
+
+RandomTestPlayer::RandomTestPlayer(string name, const Game& game): Player(name, game), p_lastAttackedCoordinate(0, 0) {}
+
+bool RandomTestPlayer::placeShips(Board& board) {
+	for (int i = 0; i < game().noOfShips(); i++) {
+		if (!board.placeShips(Coordinate(0, i), i, vertical)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+Coordinate RandomTestPlayer::recommendAttack()  {
+	if (p_lastAttackedCoordinate.row > 0) {
+		p_lastAttackedCoordinate.row--;
+	}
+
+	else {
+		p_lastAttackedCoordinate.row = game().rows() - RandomNumberGeneration_helper::nextInt(0, 9);
+
+		if (p_lastAttackedCoordinate.column > 0) {
+			p_lastAttackedCoordinate.column--;
+		}
+
+		else {
+			p_lastAttackedCoordinate.column = game().columns() - RandomNumberGeneration_helper::nextInt(0, 9);
+		}
+	}
+
+	return p_lastAttackedCoordinate;
+}
+
+void RandomTestPlayer::recordAttackResults(Coordinate, bool, bool, bool, int){
+	// RandomTestPlayer completely ignores the result of any attack
+}
+
+void RandomTestPlayer::recordAttackByOpponent(Coordinate) {
+	// RandomTestPlayer completely ignores what the opponent does
 }
 
 //******************************************************************************************
@@ -643,7 +701,6 @@ void HuntTarget_Player::recordAttackByOpponent(Coordinate) {
 }
 
 
-
 /******************************************************************************************/
 // Monte carlo Tree Search Approach
 /******************************************************************************************/
@@ -679,7 +736,8 @@ private:
     double UCT(TreeNode* parentNode, TreeNode* childNode);
     TreeNode* selection(TreeNode* parentNode);
     void expansion(TreeNode* parentNode);
-    double simulation(TreeNode* node);
+    Coordinate simulation(TreeNode* node);
+    double attackRewards(TreeNode* currentNode, Coordinate coordinate, bool isValidShot, bool isShotHit, bool isShipDestroyed, int shipID);
     void backpropagation(TreeNode* node, double reward);
     void deleteTree(TreeNode* node);
 
@@ -691,61 +749,23 @@ MCTS_Player::MCTS_Player(std::string name, const Game& game) : HuntTarget_Player
 
 Coordinate MCTS_Player::recommendAttack() {
     if (!rootNode) {
-        // Initialize the root node if it doesn't exist
         rootNode = std::make_unique<TreeNode>();
     }
 
-    // Selection phase: Traverse down the tree to select a leaf node
     TreeNode* currentNode = rootNode.get();
+
+    // Selection phase
     while (!currentNode->children.empty()) {
-        // Use selection policy to choose the next node
-        double bestUCT = -std::numeric_limits<double>::infinity();
-        TreeNode* selectedNode = nullptr;
-        for (auto& child : currentNode->children) {
-            double uct = UCT(currentNode, child.get());
-            if (uct > bestUCT) {
-                bestUCT = uct;
-                selectedNode = child.get();
-            }
-        }
-        currentNode = selectedNode;
+        currentNode = selection(currentNode);
     }
 
-    // Expansion phase: Expand the selected leaf node if it hasn't been fully explored
-    if (currentNode->noOfVisits > 0) {
-        expansion(currentNode);
-        currentNode = currentNode->children.back().get(); // Select the newly added child node
-    }
+    // Simulation phase
+    Coordinate attackCoordinate = simulation(currentNode);
 
-    // Simulation phase: Simulate a game from the current state represented by the selected node
-    double reward = simulation(currentNode);
+    // Backpropagation
+    backpropagation(currentNode, 0.0);
 
-    // Backpropagation phase: Update reward values of all nodes along the path to the root node
-    while (currentNode != nullptr) {
-        currentNode->reward_value += reward;
-        currentNode->noOfVisits++;
-        currentNode = currentNode->parent;
-    }
-
-    // Choose the move based on the child with the highest reward value
-    double bestReward = -std::numeric_limits<double>::infinity();
-    Coordinate bestMove;
-
-    for (size_t i = 0; i < rootNode->children.size(); ++i) {
-        double childReward = rootNode->children[i]->reward_value;
-        if (childReward > bestReward) {
-            bestReward = childReward;
-            bestMove = Coordinate(i / game().columns(), i % game().columns());
-        }
-    }
-
-    // Fail-safe mechanism to avoid a complete crash if no valid move is found
-	if (bestReward == 0) {
-		// Choose a random move if all reward values are zero
-		bestMove = Coordinate(RandomNumberGeneration_helper::nextInt(game().rows()), RandomNumberGeneration_helper::nextInt(game().columns()));
-	}
-
-    return bestMove;
+    return attackCoordinate;
 }
 
 void MCTS_Player::recordAttackResults(Coordinate coordinate, bool isValidShot, bool isShotHit, bool isShipDestroyed, int shipID) {
@@ -764,6 +784,22 @@ void MCTS_Player::recordAttackResults(Coordinate coordinate, bool isValidShot, b
         }
     }
 
+	// Update reward values of all nodes along the path to the root node
+	TreeNode* currentNode = rootNode.get();
+
+	// Calculate the reward for the attack and update the reward values
+	double reward = 0.0;
+	if (isValidShot) {
+		reward = attackRewards(currentNode, coordinate, isValidShot, isShotHit, isShipDestroyed, shipID);
+	}
+
+	while (currentNode != nullptr) {
+	currentNode->reward_value += reward;
+	currentNode->noOfVisits++;
+	currentNode = currentNode->parent;
+	}
+
+	backpropagation(rootNode.get(), reward);
     return;
 }
 
@@ -784,8 +820,8 @@ void MCTS_Player::recordAttackByOpponent(Coordinate) {
  *  C is a constant to adjust the amount of exploration and incorporates the sqrt(2) from the UCB1 formula
  */
 double MCTS_Player::UCT(TreeNode* parentNode, TreeNode* childNode) {
-    const double EXPLORATION_CONSTANT = 1.0 / (2 * sqrt(2.0));
-	//const double EXPLORATION_CONSTANT = 1.0;
+    //const double EXPLORATION_CONSTANT = 1.0 / (2 * sqrt(2.0));
+	const double EXPLORATION_CONSTANT = 1.41;
 
     if (childNode->noOfVisits == 0) {
         // Return a very large value for unvisited nodes, basically like using infinity
@@ -815,59 +851,97 @@ MCTS_Player::TreeNode* MCTS_Player::selection(TreeNode* parentNode) {
 }
 
 void MCTS_Player::expansion(TreeNode* node) {
-    // Add a new child to our existing node
-    node->children.push_back(std::make_unique<TreeNode>());
-    node->children.back()->parent = node; // Set the parent pointer for our new node
+	p_simulateProbability.determine_locations();
+	if (p_simulateProbability.place_ships()) {
+		// Successful placement, create a new child node
+		node->children.push_back(std::make_unique<TreeNode>());
+		node->children.back()->parent = node;
+	}
 }
 
-double MCTS_Player::simulation(TreeNode* node) {
-    size_t i = 0;
-    Timer timer;
-    while (!p_simulateProbability.allShipsDestroyed()) {
-    	// calling timer.elapsed takes time itself, so only checking every 20 simulations
-		if (i % 100 == 0) {
-			if (timer.elapsed() >= 6000) {
+Coordinate MCTS_Player::simulation(TreeNode* node) {
+	p_simulateProbability.determine_locations();
+
+	size_t i = 0;
+	Timer timer;
+	while (i < 1800000) {
+		// calling timer.elapsed takes time itself, so only checking every 20 simulations
+		if (i % 20 == 0) {
+			if (timer.elapsed() >= 3900) {
 				 // break if close to 4 second limit
 				cout << "TIMER FORCED BREAK" << endl;
 				break;
 			}
 		}
+		if (timer.elapsed() >= 3900) {
+			// break if close to 4 second limit
+			cout << "TIMER FORCED BREAK" << endl;
+			break;
+		}
 
-        if (timer.elapsed() >= 6000) {
-            cout << "TIMER FORCED BREAK" << endl;
-            break;
-        }
+		if(p_simulateProbability.allShipsDestroyed()) {
+			break;
+		}
+		// recursion within possibilities, continue if failed
+		if (!p_simulateProbability.place_ships()) {
+			++i;
+			continue;
+		}
 
-        p_simulateProbability.determine_locations();
+		if (p_simulateProbability.is_valid_board()) {
+			// update board
+			p_simulateProbability.read_to(p_data);
+		}
 
-        if (!p_simulateProbability.place_ships()) {
-            ++i;
-            continue;
-        }
+		++i;
+		p_simulateProbability.unplace_all_ships();
+	}
 
-        if (p_simulateProbability.is_valid_board()) {
-            p_simulateProbability.read_to(p_data);
-        }
+	int max = p_data[0];
+	size_t cell = 0;
+	for (size_t i = 0, N = p_data.size(); i < N; ++i) {
+		if (p_data[i] > max) {
+			max = p_data[i];
+			cell = i;
+		}
+	}
 
-        ++i;
-        p_simulateProbability.unplace_all_ships();
+	for (size_t i = 0, N = p_data.size(); i < N; ++i) {
+		p_data[i] = 0;
+	}
+
+	// fail safe to avoid complete crash
+	if (max == 0) {
+		cell = static_cast<size_t>(RandomNumberGeneration_helper::nextInt(100));
+	}
+
+	return Coordinate(static_cast<int>(cell) / game().columns(), static_cast<int>(cell) % game().columns());
+}
+
+double MCTS_Player::attackRewards(TreeNode* currentNode, Coordinate coordinate, bool isValidShot, bool isShotHit, bool isShipDestroyed, int shipID) {
+	double reward = 0.0;
+    if (!isValidShot) {
+        reward = 0.0;
     }
 
-
-    // Calculate rewards based on the updated data vector
-    double reward = 0.0;
-    for (size_t j = 0; j < p_data.size(); ++j) {
-        char symbol = p_data[j];
-        if (symbol == 'X') {
-            reward += 20.0; // Reward for hitting a ship
-        } else if (symbol == 'o') {
-            reward -= 2.0; // Penalty for missing a ship
+    if (!isShotHit) {
+        p_simulateProbability.update(coordinate, 'o');
+        reward = -15.0;
+    } else {
+        if (isShipDestroyed) {
+            p_simulateProbability.ship_destroyed(shipID);
+            p_simulateProbability.update(coordinate, game().shipSymbol(shipID));
+            reward = 150.0;
         }
-        // No reward or penalty for water or empty cell
+        else {
+            p_simulateProbability.update(coordinate, 'X');
+            reward = 50.0;
+        }
     }
 
-    backpropagation(node, reward);
-
+	// Update reward value for the current node
+	currentNode->reward_value += reward;
+	backpropagation(currentNode->parent, reward);
     return reward;
 }
 
@@ -899,14 +973,13 @@ MCTS_Player::~MCTS_Player() {
     deleteTree(rootNode.get());
 }
 
-
 //******************************************************************************************
 //  createPlayer
 //******************************************************************************************
 
 Player* createPlayer(string playerType, string playerName, const Game& game) {
     static string playerTypes[] = {
-        "human", "prob_recursive", "huntTarget", "mcts"
+        "human", "prob_recursive", "huntTarget", "mcts", "randoTest"
     };
 
     int choice;
@@ -918,6 +991,7 @@ Player* createPlayer(string playerType, string playerName, const Game& game) {
       case 1:  return new Probabilistic_Recursion_Player(playerName, game);
       case 2:  return new HuntTarget_Player(playerName, game);
       case 3:  return new MCTS_Player(playerName, game);
+      case 4:  return new RandomTestPlayer(playerName, game);
       default: return nullptr;
     }
 }
